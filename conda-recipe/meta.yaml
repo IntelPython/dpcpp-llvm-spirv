@@ -47,20 +47,21 @@ outputs:
         - dpcpp_llvm_spirv
     about:
       home: https://github.com/IntelPython/dpcpp-llvm-spirv.git
+      summary: A Python package vendoring llvm-spirv executable from Intel(R) oneAPI DPC++ compiler.
       license: LicenseRef-Proprietary-Intel-End-User-License-Agreement-for-Developer-Tools
       license_family: Proprietary
       license_file:
         - license.txt
         - tpp.txt
-      summary: A Python package vendoring llvm-spirv executable from Intel(R) oneAPI DPC++ compiler.
-      description: |
-        <strong>LEGAL NOTICE: Use of this software package is subject to the software license agreement (
-        as set forth above, in the license section of the installed Conda package and/or the README file)
-        and all notices, disclaimers or license terms for third party or open source software included in or
-        with the software.</strong>
+       description: |
+        <strong>LEGAL NOTICE: Use of this software package is subject to the
+        software license agreement (as set forth above, in the license section of
+        the installed Conda package and/or the README file) and all notices,
+        disclaimers or license terms for third party or open source software
+        included in or with the software.</strong>
         <br/><br/>
-        EULA: <a href=\"https://software.intel.com/content/dam/develop/external/us/en/documents/pdf/\
-        intel-developer-tools-eula-09-03-19.pdf\" target=\"_blank\">
-        Intel End User License Agreement for Developer Tools</a>
+        EULA: <a href=\"https://software.intel.com/content/dam/develop/external/us/en/documents/pdf/intel-developer-tools-eula-09-03-19.pdf\" target=\"_blank\">Intel End User License Agreement for Developer Tools</a>
+        <br/><br/>
+       
         <br/> Third Party Programs: Included in software package
-        <br/><br/>
+        
