@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -ex
+
 echo -e "Start building dpcpp-llvm-spirv package \n"
 src="${SRC_DIR}"
 
@@ -15,7 +18,7 @@ popd
 
 echo -e "Done building the Python package. Start vendoring of llvm-spirv executable \n"
 
-pushd ${src}/compiler
+pushd ${BUILD_PREFIX}/
 cp bin-llvm/llvm-spirv $(${PYTHON} -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())")
 echo "copy llvm-spirv to: $(${PYTHON} -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())")"
 popd
