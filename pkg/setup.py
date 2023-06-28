@@ -15,7 +15,7 @@ with open(os.path.join("dpcpp_llvm_spirv", "_version.py"), "w") as fh:
 
 
 setup(
-    name="dpcpp_llvm_spirv",
+    name="dpcpp-llvm-spirv",
     packages=[
         "dpcpp_llvm_spirv",
     ],
@@ -32,4 +32,10 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     license="Intel End User License Agreement for Developer Tools",
+    package_data={
+        "dpcpp_llvm_spirv": [
+            "llvm-spirv",
+            "llvm-spirv.exe"
+        ]
+    },
 )

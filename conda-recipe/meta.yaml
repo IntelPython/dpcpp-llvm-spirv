@@ -5,7 +5,7 @@
 {% set target_platform = "win-64" %}    # [win64]
 
 # use this if our build script changes and we need to increment beyond intel's version
-{% set dst_build_number = '1' %}
+{% set dst_build_number = '2' %}
 {% set build_number = intel_build_number|int + dst_build_number|int %}
 
 package:
@@ -28,6 +28,10 @@ outputs:
   - name: dpcpp-llvm-spirv
     script: repack.sh   # [linux]
     script: repack.bat  # [win]
+    build:
+      include_recipe: False
+      script_env:
+        - WHEELS_OUTPUT_FOLDER
     requirements:
       build:
         - dpcpp_linux-64 =={{ version }}=intel_{{ intel_build_number }}  #[linux]
@@ -35,6 +39,7 @@ outputs:
       host:
         - python
         - setuptools  >=63
+        - wheel
       run:
         - python
     test:

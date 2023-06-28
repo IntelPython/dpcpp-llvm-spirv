@@ -1,17 +1,32 @@
 
-set /P DPCPP_LLVM_SPIRV_VERSION < %PYTHON% get_icpx_version.py
+set /P "DPCPP_LLVM_SPIRV_VERSION=%PKG_VERSION%"
 echo "Inferred DPCPP_LLVM_SPIRV_VERSION=%DPCPP_LLVM_SPIRV_VERSION%"
 
-pushd %SRC_DIR%\package
-%PYTHON% setup.py install --single-version-externally-managed --record=llvm_spirv_record.txt
-type llvm_spirv_record.txt
-popd
+set "BUILD_ARGS=--single-version-externally-managed --record=llvm_spirv_record.txt"
 
-pushd %BUILD_PREFIX%\
-%PYTHON% -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())" > Output
-set /p DIRSTR= < Output
-if not exist Library\bin-llvm\llvm-spirv.exe (exit 1)
-copy Library\bin-llvm\llvm-spirv.exe %DIRSTR%
-if errorlevel 1 exit 1
-del Output
-popd
+if not exist %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe (exit 1)
+
+if NOT "%WHEELS_OUTPUT_FOLDER%"=="" (
+  pushd %SRC_DIR%\package
+  copy %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe %SRC_DIR%\package\dpcpp_llvm_spirv\
+  %PYTHON% setup.py install bdist_wheel %BUILD_ARGS%
+  if errorlevel 1 exit 1
+  copy dist\dpcpp_llvm_spirv*.whl %WHEELS_OUTPUT_FOLDER%
+  if errorlevel 1 exit 1
+  popd
+) ELSE (
+  pushd %SRC_DIR%\package
+  %PYTHON% setup.py install %BUILD_ARGS%
+  type llvm_spirv_record.txt
+  popd
+
+  pushd %BUILD_PREFIX%\
+  %PYTHON% -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())" > Output
+  set /p DIRSTR= < Output
+
+  copy Library\bin-llvm\llvm-spirv.exe %DIRSTR%
+  if errorlevel 1 exit 1
+  del Output
+  popd
+)
+
