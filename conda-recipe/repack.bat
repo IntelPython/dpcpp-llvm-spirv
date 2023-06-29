@@ -8,7 +8,8 @@ if not exist %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe (exit 1)
 
 if NOT "%WHEELS_OUTPUT_FOLDER%"=="" (
   pushd %SRC_DIR%\package
-  copy %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe %SRC_DIR%\package\dpcpp_llvm_spirv\
+  if not exist %SRC_DIR%\package\dpcpp_llvm_spirv\bin mkdir %SRC_DIR%\package\dpcpp_llvm_spirv\bin
+  copy %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe %SRC_DIR%\package\dpcpp_llvm_spirv\bin\
   %PYTHON% setup.py install bdist_wheel %BUILD_ARGS%
   if errorlevel 1 exit 1
   copy dist\dpcpp_llvm_spirv*.whl %WHEELS_OUTPUT_FOLDER%

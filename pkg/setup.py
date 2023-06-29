@@ -15,22 +15,11 @@ with open(os.path.join("dpcpp_llvm_spirv", "_version.py"), "w") as fh:
     fh.write(f"__version__ = '{pkg_version}'")
     fh.write("\n")
 
-class InstallCmd(install):
-    def run(self):
-        install.run(self)
-        install_dir = os.path.join(self.install_lib, "dpcpp_llvm_spirv")
-        if "linux" in sys.platform:
-            spirv_bin = os.path.join(install_dir, "llvm-spirv")
-        elif "win" in sys.platform:
-            spirv_bin = os.path.join(install_dir, "llvm-spirv.exe")
-        os.chmod(spirv_bin, 0o755)
-
 setup(
     name="dpcpp-llvm-spirv",
     packages=[
         "dpcpp_llvm_spirv",
     ],
-    cmdclass={'install': InstallCmd},
     version=pkg_version,
     author="Intel Corp.",
     author_email="scripting@intel.com",
@@ -46,8 +35,8 @@ setup(
     license="Intel End User License Agreement for Developer Tools",
     package_data={
         "dpcpp_llvm_spirv": [
-            "llvm-spirv",
-            "llvm-spirv.exe"
+            "bin/llvm-spirv",
+            "bin/llvm-spirv.exe"
         ]
     },
 )
