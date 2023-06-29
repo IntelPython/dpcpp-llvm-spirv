@@ -1,5 +1,5 @@
 
-set /P "DPCPP_LLVM_SPIRV_VERSION=%PKG_VERSION%"
+set "DPCPP_LLVM_SPIRV_VERSION=%PKG_VERSION%"
 echo "Inferred DPCPP_LLVM_SPIRV_VERSION=%DPCPP_LLVM_SPIRV_VERSION%"
 
 set "BUILD_ARGS=--single-version-externally-managed --record=llvm_spirv_record.txt"
