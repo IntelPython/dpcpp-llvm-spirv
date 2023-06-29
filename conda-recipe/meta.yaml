@@ -44,8 +44,6 @@ outputs:
         - python
     test:
       commands:
-        - ls -A1 ${PREFIX}/lib/*              # [unix]
-        - dir %PREFIX%\Library\lib\*          # [win]
         - test -x $(python -c "import dpcpp_llvm_spirv as dls; print(dls.get_llvm_spirv_path())")  # [unix]
         - python -c "import dpcpp_llvm_spirv as dls, os, sys; sys.exit(0 if os.path.isfile(dls.get_llvm_spirv_path()) else 1)" # [win]
       imports:
