@@ -21,6 +21,7 @@ cp ${BUILD_PREFIX}/bin-llvm/llvm-spirv $src/package/dpcpp_llvm_spirv/bin/
 
 if [ -n "${WHEELS_OUTPUT_FOLDER}" ]; then
   # Build wheel package
+
   $PYTHON setup.py install ${BUILD_ARGS} bdist_wheel ${WHEELS_BUILD_ARGS} 
   cp dist/dpcpp_llvm_spirv*.whl ${WHEELS_OUTPUT_FOLDER}
 else
@@ -29,4 +30,5 @@ else
   cat llvm_spirv_record.txt
 fi
 echo "done. \n"
+
 popd
