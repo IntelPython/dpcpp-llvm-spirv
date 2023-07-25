@@ -21,6 +21,8 @@ source:
 build:
   number: {{ build_number }}
   skip: True                                  # [not (linux64 or osx or win)]
+  script_env:
+    - WHEELS_OUTPUT_FOLDER
   missing_dso_whitelist:
     - '*'
 
