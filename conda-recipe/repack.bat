@@ -10,6 +10,8 @@ pushd %SRC_DIR%\package
 if not exist %SRC_DIR%\package\dpcpp_llvm_spirv\bin mkdir %SRC_DIR%\package\dpcpp_llvm_spirv\bin
 copy %BUILD_PREFIX%\Library\bin-llvm\llvm-spirv.exe %SRC_DIR%\package\dpcpp_llvm_spirv\bin\
 
+rem Workaround to remove spaces from the env value
+set WHEELS_OUTPUT_FOLDER=%WHEELS_OUTPUT_FOLDER: =%
 if NOT "%WHEELS_OUTPUT_FOLDER%"=="" (
   %PYTHON% setup.py install %BUILD_ARGS% bdist_wheel
   if errorlevel 1 exit 1

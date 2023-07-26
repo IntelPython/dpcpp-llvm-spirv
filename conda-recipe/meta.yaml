@@ -21,8 +21,6 @@ source:
 build:
   number: {{ build_number }}
   skip: True                                  # [not (linux64 or osx or win)]
-  script_env:
-    - WHEELS_OUTPUT_FOLDER
   missing_dso_whitelist:
     - '*'
 
@@ -32,6 +30,8 @@ outputs:
     script: repack.bat  # [win]
     build:
       include_recipe: False
+      script_env:
+        - WHEELS_OUTPUT_FOLDER
     requirements:
       build:
         - dpcpp_linux-64 =={{ version }}=intel_{{ intel_build_number }}  #[linux]
