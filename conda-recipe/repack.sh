@@ -12,7 +12,7 @@ export DPCPP_LLVM_SPIRV_VERSION="${PKG_VERSION}"
 echo -e "Inferred DPCPP_LLVM_SPIRV_VERSION=${DPCPP_LLVM_SPIRV_VERSION}"
 
 BUILD_ARGS="--single-version-externally-managed --record=llvm_spirv_record.txt"
-WHEELS_BUILD_ARGS="-p manylinux2014_x86_64"
+WHEELS_BUILD_ARGS="-p manylinux2014_x86_64 --python-tag py$PY_VER"
 
 pushd $src/package
 echo -e "Start vendoring of llvm-spirv executable \n"
