@@ -1,6 +1,6 @@
-{% set version = "2023.2.0" %}
-{% set intel_build_number = "49369" %}   # [linux]
-{% set intel_build_number = "49376" %}   # [win]
+{% set version = "2024.0prerelease0" %}
+{% set intel_build_number = "49434" %}   # [linux]
+{% set intel_build_number = "49414" %}   # [win]
 {% set target_platform = "linux-64" %}  # [linux64]
 {% set target_platform = "win-64" %}    # [win64]
 
@@ -38,7 +38,9 @@ outputs:
         - dpcpp_win-64 =={{ version }}=intel_{{ intel_build_number }}  #[win]
       host:
         - python
-        - setuptools  >=63
+        # <66 because of https://github.com/pypa/setuptools/issues/3772
+        - setuptools  >=63, <66
+        - patchelf # [linux]
         - wheel
       run:
         - python

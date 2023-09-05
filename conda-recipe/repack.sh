@@ -17,7 +17,10 @@ WHEELS_BUILD_ARGS="-p manylinux2014_x86_64 --python-tag py${PY_VER//./}"
 pushd $src/package
 echo -e "Start vendoring of llvm-spirv executable \n"
 mkdir -p $src/package/dpcpp_llvm_spirv/bin
-cp ${BUILD_PREFIX}/bin-llvm/llvm-spirv $src/package/dpcpp_llvm_spirv/bin/
+mkdir -p $src/package/dpcpp_llvm_spirv/lib
+cp ${BUILD_PREFIX}/bin/compiler/llvm-spirv $src/package/dpcpp_llvm_spirv/bin/
+cp ${BUILD_PREFIX}/lib/libonnxruntime.* $src/package/dpcpp_llvm_spirv/lib/
+patchelf --force-rpath --set-rpath '$ORIGIN/../lib' $src/package/dpcpp_llvm_spirv/bin/llvm-spirv
 
 if [ -n "${WHEELS_OUTPUT_FOLDER}" ]; then
   # Build wheel package
