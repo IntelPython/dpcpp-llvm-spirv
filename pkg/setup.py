@@ -32,5 +32,11 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     license="Intel End User License Agreement for Developer Tools",
-    package_data={"dpcpp_llvm_spirv": ["bin/llvm-spirv", "bin/llvm-spirv.exe"]},
+    package_data={
+        "dpcpp_llvm_spirv": [
+            "bin/llvm-spirv*",
+            "lib/libonnxruntime.*",  # linux
+            "bin/onnxruntime.*",  # windows
+        ]
+    },
 )
