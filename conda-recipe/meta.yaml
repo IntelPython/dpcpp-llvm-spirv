@@ -21,7 +21,6 @@ source:
     folder: compiler
   - path: ..
 
-
 build:
   number: {{ build_number }}
   skip: True                                  # [not (linux64 or osx or win)]
@@ -39,13 +38,12 @@ outputs:
       run:
         - python
     test:
-      commands:
-        - ls -A1 ${PREFIX}/lib/*              # [unix]
-        - dir %PREFIX%\Library\lib\*          # [win]
-        - test -x $(python -c "import dpcpp_llvm_spirv as dls; print(dls.get_llvm_spirv_path())")  # [unix]
-        - python -c "import dpcpp_llvm_spirv as dls, os, sys; sys.exit(0 if os.path.isfile(dls.get_llvm_spirv_path()) else 1)" # [win]
+      script: run_test.py
       imports:
         - dpcpp_llvm_spirv
+      requires:
+        - spirv-tools
+        - llvm-tools
     about:
       home: https://github.com/IntelPython/dpcpp-llvm-spirv.git
       license: LicenseRef-Proprietary-Intel-End-User-License-Agreement-for-Developer-Tools
