@@ -39,6 +39,7 @@ outputs:
       host:
         - python
         - setuptools
+        - patchelf # [linux]
         - wheel
       run:
         - python
