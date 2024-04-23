@@ -11,7 +11,7 @@ if not exist %SRC_DIR%\package\dpcpp_llvm_spirv\bin mkdir %SRC_DIR%\package\dpcp
 copy %BUILD_PREFIX%\Library\bin\compiler\llvm-spirv.exe %SRC_DIR%\package\dpcpp_llvm_spirv\bin\
 
 for /f %%a in (
-  "%BUILD_PREFIX%\Library\bin\compiler\onnxruntime.*"
+  "%BUILD_PREFIX%\Library\bin\onnxruntime.*"
 ) do copy %%~fa %SRC_DIR%\package\dpcpp_llvm_spirv\bin\
 
 rem Workaround to remove spaces from the env value
