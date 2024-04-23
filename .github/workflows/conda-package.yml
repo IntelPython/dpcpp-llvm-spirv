@@ -16,24 +16,32 @@ env:
   MODULE_NAME: dpcpp_llvm_spirv
 
 jobs:
-  build_linux:
-    runs-on: ubuntu-latest
-
+  build:
     strategy:
       matrix:
         python: ["3.9", "3.10", "3.11"]
-
+        os: ["ubuntu-latest", "windows-latest"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.os == 'windows-latest' && 'cmd /C CALL {0}' || 'bash -l {0}' }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Setup conda-build
-        uses: ./.github/actions/setup-conda-build
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          activate-environment: ""
+
+      - name: Install conda-build
+        run: conda install conda-build
 
       - name: Build conda package
         env:
-          CHANNELS: -c intel -c main --override-channels
+          CHANNELS: -c intel -c conda-forge --override-channels
         run: conda build --python ${{ matrix.python }} ${{ env.CHANNELS }} conda-recipe
 
       - name: Upload artifact
@@ -42,54 +50,17 @@ jobs:
           name: ${{ env.PACKAGE_NAME }} ${{ runner.os }} Python ${{ matrix.python }}
           path: /usr/share/miniconda/conda-bld/linux-64/${{ env.PACKAGE_NAME }}-*.tar.bz2
 
-  build_windows:
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        python: ["3.9", "3.10", "3.11"]
-
-    env:
-      CHANNELS: -c intel -c main --override-channels
-      conda-bld: C:\Miniconda\conda-bld\win-64\
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-activate-base: true
-          activate-environment: ""
-
-      - name: Cache conda packages
-        uses: actions/cache@v3
-        env:
-          CACHE_NUMBER: 0  # Increase to reset cache
-        with:
-          path: /home/runner/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-python-${{ matrix.python }}-${{hashFiles('**/meta.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-python-${{ matrix.python }}-
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-
-      - name: Install conda-build
-        run: conda install conda-build
-      - name: Build conda package
-        run: conda build --python ${{ matrix.python }} ${{ env.CHANNELS }} conda-recipe
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }} ${{ runner.os }} Python ${{ matrix.python }} ${{ matrix.artifact_name }}
-          path: ${{ env.conda-bld }}${{ env.PACKAGE_NAME }}-*.tar.bz2
-
-  upload_linux:
-    needs: build_linux
+  upload:
+    needs: build
     if: ${{github.ref == 'refs/heads/main' || (startsWith(github.ref, 'refs/heads/release') == true)}}
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         python: ["3.9", "3.10", "3.11"]
+        os: ["ubuntu-latest", "windows-latest"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.os == 'windows-latest' && 'cmd /C CALL {0}' || 'bash -l {0}' }}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
@@ -104,35 +75,4 @@ jobs:
         run: conda install anaconda-client
 
       - name: Upload
-        env:
-          ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-        run: |
-          source /usr/share/miniconda/etc/profile.d/conda.sh
-          conda activate
-          anaconda --token $ANACONDA_TOKEN upload --user dppy --label dev ${PACKAGE_NAME}-*.tar.bz2
-
-  upload_windows:
-    needs: build_windows
-    if: ${{github.ref == 'refs/heads/main' || (startsWith(github.ref, 'refs/heads/release') == true)}}
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        python: ["3.9", "3.10", "3.11"]
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }} ${{ runner.os }} Python ${{ matrix.python }}
-
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-activate-base: true
-          activate-environment: ""
-      - name: Install anaconda-client
-        run: conda install anaconda-client
-
-      - name: Upload
-        env:
-          ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-        run: |
-          anaconda --token ${{ env.ANACONDA_TOKEN }} upload --user dppy --label dev ${{ env.PACKAGE_NAME }}-*.tar.bz2
+        run: anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --user dppy --label dev ${{ env.PACKAGE_NAME }}-*.tar.bz2
