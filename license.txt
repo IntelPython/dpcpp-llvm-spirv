@@ -242,7 +242,7 @@ to items referenced therein, at any time without notice, but is not obligated to
 support, update or provide training for the Materials under the terms of this
 Agreement. Intel offers free community and paid priority support options. More
 information on these support options can be found at:
-https://software.intel.com/content/www/us/en/develop/support/priority-support.html.
+https://www.intel.com/content/www/us/en/developer/get-help/priority-support.html.
 
 7.	LIMITATION OF LIABILITY.
 
