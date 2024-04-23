@@ -1,22 +1,36 @@
 #!/bin/bash
+
+set -ex
+
 echo -e "Start building dpcpp-llvm-spirv package \n"
 src="${SRC_DIR}"
 
 echo "Python: ${PYTHON}"
 [ -z "${PYTHON}" ] && exit 1
 
-export DPCPP_LLVM_SPIRV_VERSION=$(${PYTHON} get_icpx_version.py)
+export DPCPP_LLVM_SPIRV_VERSION="${PKG_VERSION}"
 echo -e "Inferred DPCPP_LLVM_SPIRV_VERSION=${DPCPP_LLVM_SPIRV_VERSION}"
 
+BUILD_ARGS="--single-version-externally-managed --record=llvm_spirv_record.txt"
+WHEELS_BUILD_ARGS="-p manylinux2014_x86_64 --python-tag py${PY_VER//./}"
+
 pushd $src/package
-${PYTHON} setup.py install --single-version-externally-managed --record=llvm_spirv_record.txt
-cat llvm_spirv_record.txt
-popd
+echo -e "Start vendoring of llvm-spirv executable \n"
+mkdir -p $src/package/dpcpp_llvm_spirv/bin
+mkdir -p $src/package/dpcpp_llvm_spirv/lib
+cp ${BUILD_PREFIX}/bin/compiler/llvm-spirv $src/package/dpcpp_llvm_spirv/bin/
+cp ${BUILD_PREFIX}/lib/libonnxruntime.* $src/package/dpcpp_llvm_spirv/lib/
+patchelf --force-rpath --set-rpath '$ORIGIN/../lib' $src/package/dpcpp_llvm_spirv/bin/llvm-spirv
 
-echo -e "Done building the Python package. Start vendoring of llvm-spirv executable \n"
-
-pushd ${src}/compiler
-cp bin-llvm/llvm-spirv $(${PYTHON} -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())")
-echo "copy llvm-spirv to: $(${PYTHON} -c "import dpcpp_llvm_spirv as p; print(p.get_llvm_spirv_path())")"
-popd
+if [ -n "${WHEELS_OUTPUT_FOLDER}" ]; then
+  # Build wheel package
+  $PYTHON setup.py install ${BUILD_ARGS} bdist_wheel ${WHEELS_BUILD_ARGS}
+  cp dist/dpcpp_llvm_spirv*.whl ${WHEELS_OUTPUT_FOLDER}
+else
+  pushd $src/package
+  ${PYTHON} setup.py install ${BUILD_ARGS}
+  cat llvm_spirv_record.txt
+fi
 echo "done. \n"
+
+popd
