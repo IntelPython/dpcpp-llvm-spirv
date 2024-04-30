@@ -39,21 +39,28 @@ jobs:
       - name: Install conda-build
         run: conda install conda-build
 
-      - name: Build conda package
-        env:
-          CHANNELS: -c intel -c conda-forge --override-channels
-        run: conda build --python ${{ matrix.python }} ${{ env.CHANNELS }} conda-recipe
-
       - name: Store conda paths as envs
         shell: bash -l {0}
         run: |
           echo "CONDA_BLD=$CONDA_PREFIX/conda-bld/${{ runner.os == 'Linux' && 'linux' || 'win' }}-64/" | tr "\\" '/' >> $GITHUB_ENV
+          echo "WHEELS_OUTPUT_FOLDER=$GITHUB_WORKSPACE${{ runner.os == 'Linux' && '/' || '\\' }}" >> $GITHUB_ENV
+
+      - name: Build conda package
+        env:
+          CHANNELS: -c intel -c conda-forge --override-channels
+        run: conda build --python ${{ matrix.python }} ${{ env.CHANNELS }} conda-recipe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PACKAGE_NAME }} ${{ runner.os }} Python ${{ matrix.python }}
           path: ${{ env.CONDA_BLD }}${{ env.PACKAGE_NAME }}-*.tar.bz2
+
+      - name: Upload wheels artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PACKAGE_NAME }} ${{ runner.os }} Wheels Python ${{ matrix.python }}
+          path: ${{ env.WHEELS_OUTPUT_FOLDER }}${{ env.MODULE_NAME }}-*.whl
 
   upload:
     needs: build
@@ -80,5 +87,11 @@ jobs:
       - name: Install anaconda-client
         run: conda install anaconda-client
 
+      - name: Package version
+        run: echo "PACKAGE_VERSION=$(basename ${{ env.PACKAGE_NAME }}-*.tar.bz2 | sed 's/^${{ env.PACKAGE_NAME }}-\([^-]*\).*/\1/')" >> $GITHUB_ENV
+
       - name: Upload
         run: anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --user dppy --label dev ${{ env.PACKAGE_NAME }}-*.tar.bz2
+
+      - name: Upload Wheels
+        run: anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --user dppy --label dev ${{ env.MODULE_NAME }}-*.whl --version ${{ env.PACKAGE_VERSION }}
