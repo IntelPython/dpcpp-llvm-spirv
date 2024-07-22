@@ -33,7 +33,7 @@ outputs:
         - WHEELS_OUTPUT_FOLDER
     requirements:
       build:
-        - compiler('c')
+        - {{ compiler('c') }}
         - dpcpp_linux-64 =={{ version }}=*_{{ forge_build_number }}  #[linux]
         - dpcpp_win-64 =={{ version }}=*_{{ forge_build_number }}  #[win]
       host:
