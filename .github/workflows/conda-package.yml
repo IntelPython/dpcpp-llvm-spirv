@@ -19,7 +19,7 @@ jobs:
   build:
     strategy:
       matrix:
-        python: ["3.9", "3.10", "3.11"]
+        python: ["3.9", "3.10", "3.11", "3.12"]
         os: ["ubuntu-latest", "windows-latest"]
     runs-on: ${{ matrix.os }}
     defaults:
@@ -47,7 +47,7 @@ jobs:
 
       - name: Build conda package
         env:
-          CHANNELS: -c intel -c conda-forge --override-channels
+          CHANNELS: -c conda-forge --override-channels
         run: conda build --python ${{ matrix.python }} ${{ env.CHANNELS }} conda-recipe
 
       - name: Upload artifact
